@@ -4,6 +4,7 @@
 
 > [!WARNING]
 > 由于是第一版，所以还没有测试通过管理器更新是否可行，可能有错误，反正目前手动安装是可以正常运行的。
+>
 > 忽略源地址和目标地址可能无法正常工作，因为我用不到所以暂时没有测试。
 
 ## 特点
@@ -27,4 +28,5 @@
 ## 感谢
 
 想法源于[twoone-3/AdGuardHomeForRoot](https://github.com/twoone-3/AdGuardHomeForRoot)
+
 预置规则[217heidai/adblockfilters](https://github.com/217heidai/adblockfilters)
