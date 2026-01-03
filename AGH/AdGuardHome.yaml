@@ -22,9 +22,13 @@ dns:
   ratelimit_subnet_len_ipv6: 56
   ratelimit_whitelist: []
   refuse_any: true
-  upstream_dns: []
+  upstream_dns:
+    - https://doh.pub/dns-query
+    - https://cloudflare-dns.com/dns-query
   upstream_dns_file: ""
-  bootstrap_dns: []
+  bootstrap_dns:
+    - 119.29.29.29
+    - 1.1.1.1
   fallback_dns: []
   upstream_mode: load_balance
   fastest_timeout: 1s
