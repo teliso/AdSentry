@@ -21,7 +21,7 @@ add_configuration() {
 
   # 忽略 AdGuardHome 自身流量（UID + GID 唯一组合）
   iptables -t nat -A ADSENTRY_REDIRECT \
-  -m owner --uid-owner nobody --gid-owner net_raw -j RETURN
+  -m owner --uid-owner root --gid-owner net_raw -j RETURN
 
   # 忽略目的地址（如本地、保留地址、上游 DNS）
   for subnet in $ignore_dest_list; do
