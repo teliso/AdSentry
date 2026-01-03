@@ -70,7 +70,6 @@ log "正在授权给可执行文件……" "Authorizing to the executable file..
 # 755 - RWX/RX/RX 644 - RW/R/R
 set_perm_recursive "$MODPATH" 0 0 0755 0644
 find "$MODPATH" -type f -name "*.sh" -exec chmod 0755 {} \;
-chown nobody:net_raw "$MODPATH/AGH/AdGuardHome"
 chmod 0755 "$MODPATH/AGH/AdGuardHome"
 
 log "授权完成" "Authorization completed"

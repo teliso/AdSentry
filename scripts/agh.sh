@@ -16,7 +16,7 @@ start_agh () {
   export SSL_CERT_DIR="/system/etc/security/cacerts/"
 
   log "正在启动AdGuardHome……" "Starting AdGuardHome..."
-  "$AGH_BIN_FILE" -w "$AGH_DIR" -c "AdGuardHome.yaml" -l "AdGuardHome.log" --pidfile "$AGH_PID_FILE" &
+  su -g 3004 -c "$AGH_BIN_FILE -w $AGH_DIR -c AdGuardHome.yaml -l AdGuardHome.log --pidfile $AGH_PID_FILE &"
 
   # 等待 PID 文件出现，最多等 10 秒
   timeout=10
