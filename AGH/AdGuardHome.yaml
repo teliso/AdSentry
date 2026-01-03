@@ -3,10 +3,10 @@ http:
     port: 6060
     enabled: false
   address: 127.0.0.1:3000
-  session_ttl: 168h # 7 days
+  session_ttl: 168h
 users:
-  - name: root
-    password: $2b$12$D3zeMIBFfzcQTqGqB.k7GOkMvqx1jgsrdiRCn2kwOHl.kNmmPfMom
+  - name: admin
+    password: $2a$10$iZ8Vzq/1gfdFX9RUWR2a4OQ8Rk49fRL91Q42kn0R1zK4GyQ7Gapu6
 auth_attempts: 5
 block_auth_min: 5
 http_proxy: ""
@@ -22,14 +22,10 @@ dns:
   ratelimit_subnet_len_ipv6: 56
   ratelimit_whitelist: []
   refuse_any: true
-  upstream_dns:
-    - https://223.6.6.6/dns-query # ali doh
-    - https://120.53.53.53/dns-query # tencent doh
+  upstream_dns: []
   upstream_dns_file: ""
-  bootstrap_dns:
-    - 223.6.6.6 # ali dns
-  fallback_dns:
-    - https://doh.360.cn/dns-query # 360 doh
+  bootstrap_dns: []
+  fallback_dns: []
   upstream_mode: load_balance
   fastest_timeout: 1s
   allowed_clients: []
@@ -41,10 +37,13 @@ dns:
   trusted_proxies:
     - 127.0.0.0/8
     - ::1/128
-  cache_size: 4194304 # 4MB
-  cache_ttl_min: 300 # 5 minutes
-  cache_ttl_max: 43200 # 12 hours
+  cache_enabled: true
+  cache_size: 4194304
+  cache_ttl_min: 300
+  cache_ttl_max: 43200
   cache_optimistic: true
+  cache_optimistic_answer_ttl: 10s
+  cache_optimistic_max_age: 12h
   bogus_nxdomain: []
   aaaa_disabled: false
   enable_dnssec: true
@@ -57,7 +56,7 @@ dns:
   ipset: []
   ipset_file: ""
   bootstrap_prefer_ipv6: false
-  upstream_timeout: 3s
+  upstream_timeout: 2s
   private_networks: []
   use_private_ptr_resolvers: false
   local_ptr_upstreams: []
@@ -96,14 +95,9 @@ statistics:
   ignored: []
   interval: 24h
   enabled: true
-filters:
-  - enabled: true
-    url: https://gcore.jsdelivr.net/gh/217heidai/adblockfilters@main/rules/adblockdnslite.txt
-    name: adblockfilters
-    id: 1754302792
+filters: []
 whitelist_filters: []
-user_rules:
-  - ""
+user_rules: []
 dhcp:
   enabled: false
   interface_name: ""
@@ -150,6 +144,7 @@ filtering:
   filters_update_interval: 24
   blocked_response_ttl: 10
   filtering_enabled: true
+  rewrites_enabled: true
   parental_enabled: false
   safebrowsing_enabled: false
   protection_enabled: true
@@ -174,4 +169,4 @@ os:
   group: ""
   user: ""
   rlimit_nofile: 0
-schema_version: 29
+schema_version: 32
