@@ -1,6 +1,7 @@
 id=AdSentry
 name=AdSentry
-version=RA20250804IW0.107.64
-versionCode=2025107
+version=0.1.0
+versionCode=20260102
 author=Teliso Young
+updateJson=https://raw.githubusercontent.com/teliso/AdSentry/main/version.json
 description=
