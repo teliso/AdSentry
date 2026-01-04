@@ -68,7 +68,7 @@ toggle_ad_sentry() {
   
   # 1. 读取PID文件（如果存在）
   if [ -f "$AGH_PID_FILE" ]; then
-    local stored_pid=$(cat "$pid_file" 2>/dev/null)
+    local stored_pid=$(cat "$AGH_PID_FILE" 2>/dev/null)
     
     # 2. 验证PID是否有效
     if [ -n "$stored_pid" ] && kill -0 "$stored_pid" 2>/dev/null; then
