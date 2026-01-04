@@ -28,5 +28,3 @@
 ## 感谢
 
 想法源于：[twoone-3/AdGuardHomeForRoot](https://github.com/twoone-3/AdGuardHomeForRoot)
-
-预置规则：[217heidai/adblockfilters](https://github.com/217heidai/adblockfilters)
