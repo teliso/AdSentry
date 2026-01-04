@@ -26,9 +26,11 @@ keep_configuration() {
 
   cp "$MODULES_DIR/AdSentry/config.sh" "$TMPDIR"
   cp "$MODULES_DIR/AdSentry/AGH/AdGuardHome.yaml" "$TMPDIR"
+  cp "$MODULES_DIR/AdSentry/AGH/data" "$TMPDIR"
   unzip -o "$ZIPFILE" -x config.sh AGH/AdGuardHome.yaml -d "$MODPATH" >/dev/null 2>&1
   mv "$TMPDIR/config.sh" "$MODPATH"
-  mv "$TMPDIR/AGH/AdGuardHome.yaml" "$MODPATH"
+  mv "$TMPDIR/AdGuardHome.yaml" "$MODPATH/AGH"
+  mv "$TMPDIR/data" "$MODPATH/AGH"
 
   log "解压完成" "Decompression completed"
 }
