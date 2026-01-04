@@ -20,7 +20,6 @@
 
 | 配置项 | 说明 |
 | ---- | ---- |
-| time_zone | 运行环境的时区，默认使用系统时区 |
 | target_port | 转发的目标端口 |
 | enables_log | 是否启用日志输出，位于模块目录下ad_sentry.log |
 | drop_ipv6_dns | 是否丢弃IPv6 DNS请求，默认丢弃 |
