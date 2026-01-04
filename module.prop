@@ -3,5 +3,5 @@ name=AdSentry
 version=0.1.0
 versionCode=20260103
 author=Teliso Young
-updateJson=https://raw.githubusercontent.com/teliso/AdSentry/main/version_arm64.json
+updateJson=https://raw.githubusercontent.com/teliso/AdSentry/main/version/version_arm64.json
 description=
