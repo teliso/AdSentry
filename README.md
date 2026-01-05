@@ -29,7 +29,10 @@
 | ignore_src_list | 忽略的源地址，默认无 |
 | ignore_dest_list | 忽略的目标地址，默认无 |
 
+> Example:
+>
 > ignore_dest_list "127.0.0.0/8 192.168.0.0/16 10.0.0.0/8 100.64.0.0/10"
+>
 > ignore_src_list "rmnet+ wlan+ tun+ 192.168.43.0/24 192.168.49.0/24"
 
 ## 感谢
