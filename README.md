@@ -26,8 +26,11 @@
 | target_port | 转发的目标端口 |
 | enables_log | 是否启用日志输出，位于模块目录下ad_sentry.log |
 | drop_ipv6_dns | 是否丢弃IPv6 DNS请求，默认丢弃 |
-| ignore_src_list | 忽略的源地址，默认无，请以空格隔开iptables可识别的地址格式 |
-| ignore_dest_list | 忽略的目标地址，默认无，同上 |
+| ignore_src_list | 忽略的源地址，默认无 |
+| ignore_dest_list | 忽略的目标地址，默认无 |
+
+> ignore_dest_list "127.0.0.0/8 192.168.0.0/16 10.0.0.0/8 100.64.0.0/10"
+> ignore_src_list "rmnet+ wlan+ tun+ 192.168.43.0/24 192.168.49.0/24"
 
 ## 感谢
 
