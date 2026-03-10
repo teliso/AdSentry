@@ -53,7 +53,7 @@ update_description() {
     description="$description 🚫"
   fi
 
-  description="$description | Rules:"
+  description="$description | Rules"
 
   if [[ "$ENABLE_FIREWALL_RULES" == "true" ]]; then
     description="$description ✅"
@@ -74,7 +74,7 @@ update_description() {
   local agh_pid
   agh_pid=$(get_agh_pid) || agh_pid="Stopped"
 
-  description="$description | AGH: $agh_version PID: $agh_pid"
+  description="$description | AGH: $agh_version - PID: $agh_pid"
 
   local error
   if ! error=$(ksud module config set override.description "$description" 2>&1); then
