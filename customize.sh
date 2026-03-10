@@ -41,21 +41,17 @@ preserve_configuration_installation() {
   if [[ "$KEEP_MODULE_CONFIG" == "true" ]]; then
     log "保留模块配置文件 config.sh" "Preserve module configuration file config.sh"
 
-    error=$(\cp -af "$MODULE_DIR/config.sh" "$MODPATH" 2>&1 >/dev/null) || \
+    error=$(\cp -af "$MODULE_DIR/config.sh" "$MODPATH" 2>&1) || \
       error "保留模块配置文件 config.sh 时失败，安装停止：$error" "Installation failed and stopped while retaining the module configuration file config.sh: $error"
   fi
 
-  if [[ "$KEEP_AGH_CONFIG" == "true" ]]; then
-    log "保留旧 AdGuardHome 的 AdGuardHome.yaml 文件" "Keep the old AdGuardHome.yaml file"
-
-    error=$(\cp -af "$MODULE_DIR/agh_work/AdGuardHome.yaml" "$MODPATH/agh_work" 2>&1 >/dev/null) || \
-      error "保留旧 AdGuardHome 的 AdGuardHome.yaml 时失败，安装停止：$error" "Installation failed while trying to retain the old AdGuardHome.yaml file, and the installation stopped: $error"
-  fi
-
   if [[ "$KEEP_AGH_DATA" == "true" ]]; then
-    log "保留旧 AdGuardHome 的 data 目录" "Retain the old AdGuardHome data directory"
+    log "保留旧 AdGuardHome 的数据" "Retain data from the old AdGuardHome"
+
+    error=$(\cp -af "$MODULE_DIR/agh_work/AdGuardHome.yaml" "$MODPATH/agh_work" 2>&1) || \
+      error "保留旧 AdGuardHome 的 AdGuardHome.yaml 文件时失败，安装停止：$error" "Installation failed while trying to retain the old AdGuardHome.yaml file, and the installation stopped: $error"
     
-    error=$(\cp -af "$MODULE_DIR/agh_work/data" "$MODPATH/agh_work" 2>&1 >/dev/null) || \
+    error=$(\cp -af "$MODULE_DIR/agh_work/data" "$MODPATH/agh_work" 2>&1) || \
       error "保留旧 AdGuardHome 的 data 目录时失败，安装停止：$error" "Installation failed while trying to preserve the old AdGuardHome data directory, and stopped: $error"
   fi
 }
@@ -65,14 +61,13 @@ directly_unzip() {
 
   log "正在解压文件……" "Installation without retaining configuration, decompressing files..."
 
-  error=$(unzip -o "$ZIPFILE" -d "$MODPATH" 2>&1 >/dev/null) || \
+  error=$(unzip -qq "$ZIPFILE" -d "$MODPATH" 2>&1) || \
     error "解压模块时出现错误，安装停止：$error" "An error occurred while extracting the module, and the installation stopped: $error"
 
   log "解压完成" "Decompression completed"
 }
 
 KEEP_MODULE_CONFIG="false"
-KEEP_AGH_CONFIG="false"
 KEEP_AGH_DATA="false"
 
 # 音量键选择函数
@@ -114,14 +109,7 @@ if [[ -d "$MODULE_DIR" ]]; then
     log "已选择不保留" "Selected not to keep"
   fi
 
-  if volume_select "是否保留旧 AdGuardHome 的 AdGuardHome.yaml 文件？" "Should we keep the old AdGuardHome.yaml file?"; then
-    KEEP_AGH_CONFIG="true"
-    log "已选择保留" "Selected to keep"
-  else
-    log "已选择不保留" "Selected not to keep"
-  fi
-
-  if volume_select "是否保留旧 AdGuardHome 的 data 目录？" "Should we retain the old AdGuardHome's data directory?"; then
+  if volume_select "是否保留旧 AdGuardHome 的数据（data 目录和 AdGuardHome.yaml 文件）？" "Should we retain the old AdGuardHome data (data directory and AdGuardHome.yaml file)?"; then
     KEEP_AGH_DATA="true"
     log "已选择保留" "Selected to keep"
   else
@@ -131,7 +119,7 @@ else
   directly_unzip
 fi
 
-if [[ "$KEEP_MODULE_CONFIG" == "true" || "$KEEP_AGH_CONFIG" == "true" || "$KEEP_AGH_DATA" == "true" ]]; then
+if [[ "$KEEP_MODULE_CONFIG" == "true" || "$KEEP_AGH_DATA" == "true" ]]; then
   preserve_configuration_installation
 else
   directly_unzip
