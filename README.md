@@ -4,7 +4,7 @@
 
 一个基于 KernelSU 和 AdGuardHome 的 DNS 过滤模块。
 
-如果你想自己打包，你需要把 AdGuardHome 二进制文件和 AdGuardHome.yaml 配置文件放在 `agh_work `目录下且**名字不能变**。
+如果你想自己打包，你需要把 AdGuardHome 二进制文件和 AdGuardHome.yaml 配置文件放在 `agh_work `目录下且**文件名不能变**。
 
 切换按钮可以启动或者关闭 AdSentry。
 
@@ -17,7 +17,7 @@
 ## 特点
 
 * 使用 KernelSU 提供的模块配置功能管理配置，要修改配置可以修改模块目录下的 `config.sh` 文件，修改保存后可以自动触发配置更新和重启 AdSentry。
-* 动态更新描述，显示模块运行信息，包括：
+* 动态更新模块描述，显示模块运行信息，包括：
   - 模块日志
   - 是否应用防火墙规则
   - AdGuardHome 的版本和 PID
