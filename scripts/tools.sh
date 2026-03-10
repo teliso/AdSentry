@@ -1,7 +1,7 @@
 #!/system/bin/sh
 
 export_language() {
-  local language="zh"
+  local language='zh'
 
   # 依次尝试系统语言属性
   local locale
@@ -10,7 +10,7 @@ export_language() {
   [[ -z "$locale" ]] && locale=$(getprop persist.sys.language 2>/dev/null)
 
   # 如果获取到的语言前两位是 en，就切换为英文
-  [[ "$locale" == en* ]] && language="en"
+  [[ "$locale" == en* ]] && language='en'
 
   readonly LANGUAGE="$language"
   export LANGUAGE
@@ -28,7 +28,7 @@ export_time_zone() {
   fi
 
   # 如果系统时区不可用，回退到 UTC
-  readonly TZ="UTC"
+  readonly TZ='UTC'
   export TZ
 }
 
@@ -54,13 +54,13 @@ is_process_running() {
 get_supported_firewall_tools() {
   local tools
 
-  which iptables >/dev/null 2>&1 && tools="iptables"
+  which iptables >/dev/null 2>&1 && tools='iptables'
   
   if which ip6tables >/dev/null 2>&1; then
     if [[ "$tools" ]]; then
       tools="$tools ip6tables"
     else
-      tools="ip6tables"
+      tools='ip6tables'
     fi
   fi
 

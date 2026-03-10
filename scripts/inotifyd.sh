@@ -16,8 +16,8 @@ process_w_event() {
   fi
 }
 
-if [[ "$MONITOR_FILE" == "config.sh" ]]; then
-  if [[ "$EVENTS" == "w" ]]; then
+if [[ "$MONITOR_FILE" == 'config.sh' ]]; then
+  if [[ "$EVENTS" == 'w' ]]; then
     "$MONITOR_DIR/config.sh"
     process_w_event
   fi
