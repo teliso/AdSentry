@@ -1,31 +1,31 @@
-readonly SCRIPTS_DIR=${0%/*}
-readonly LOG_FILE="$SCRIPTS_DIR/../ad_sentry.log"
+#!/system/bin/sh
 
-readonly enable_log=$(ksud module config get enable_log)
-
-# 默认中文
-language="zh"
-
-# 依次尝试系统语言属性
-locale=$(getprop persist.sys.locale 2>/dev/null)
-[ -z "$locale" ] && locale=$(getprop ro.product.locale 2>/dev/null)
-[ -z "$locale" ] && locale=$(getprop persist.sys.language 2>/dev/null)
-
-# 如果获取到的语言前两位是 zh，就切换为中文
-if [ "${locale:0:2}" = "en" ]; then
-    language="en"
-fi
+readonly LOG_FILE="$MODULE_DIR/as.log"
 
 log() {
   local message
-  
-  # 在实时shell中输出
-  [ "$language" = "zh" ] && message="[AS]: $1" || message="[AS]: $2"
-  echo "$message"
+  local timestamp
 
-  if [ "$enable_log" = true ]; then
-    local timestamp=$(date "+%Y/%m/%d %H:%M:%S")
-	  [ "$language" = "zh" ] && message="[$timestamp]: $1" || message="[$timestamp]: $2"
+  # 输出到日志文件
+  if [[ "$ENABLE_MODULE_LOG" == "true" ]]; then
+    timestamp=$(date "+%Y/%m/%d %H:%M:%S")
+	  [[ "$LANGUAGE" == "zh" ]] && message="[$timestamp $1]: $2" || message="[$timestamp $1]: $3"
+    echo "$message" >> "$LOG_FILE"
+    return
+  fi
+
+  # 如果遇到错误日志但是没有开启日志，强制输出错误日志到日志文件
+  if [[ "$1" == "Error" ]]; then
+    timestamp=$(date "+%Y/%m/%d %H:%M:%S")
+	  [[ "$LANGUAGE" == "zh" ]] && message="[$timestamp $1]: $2" || message="[$timestamp $1]: $3"
     echo "$message" >> "$LOG_FILE"
   fi
+}
+
+log_info() {
+  log "Info" "$1" "$2"
+}
+
+log_error() {
+  log "Error" "$1" "$2"
 }

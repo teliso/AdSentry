@@ -1,40 +1,32 @@
 ## 说明
 
-一个基于KernelSU和AdGuardHome的DNS过滤模块。
+[README_EN](https://github.com/teliso/AdSentry/blob/main/docs/README_EN.md)
 
-如果你想自己打包，你需要把AdGuardHome二进制文件放在AGH目录下。
+一个基于 KernelSU 和 AdGuardHome 的 DNS 过滤模块。
 
-账户：admin
+如果你想自己打包，你需要把 AdGuardHome 二进制文件和 AdGuardHome.yaml 配置文件放在 `agh_work `目录下且**名字不能变**。
 
-密码：admin
+切换按钮可以启动或者关闭 AdSentry。
 
-> [!WARNING]
->
-> 忽略源地址和目标地址可能无法正常工作，因为我用不到所以暂时没有测试。
+模块中的 AdGuardHome 的默认后台是：`http://127.0.0.1:3000/`
+
+账户：`admin`
+
+密码：`admin`
 
 ## 特点
 
-* 使用KernelSU提供的模块配置功能管理配置，要修改配置可以修改模块目录下config.sh文件，修改保存后可以自动触发配置更新和重启AdSentry。
-* 禁用开关和切换按钮可以动态启动/关闭AdSentry。
-* 动态更新描述，显示模块运行信息，包括AdGuardHome的PID和是否丢弃IPv6 DNS请求。
-* 模块全局日志（不含AdGuardHome）输出支持自动识别系统语言，但仅支持输出为中文和英文。
-
-## 配置
-
-| 配置项 | 说明 |
-| ---- | ---- |
-| target_port | 转发的目标端口 |
-| enables_log | 是否启用日志输出，位于模块目录下ad_sentry.log |
-| drop_ipv6_dns | 是否丢弃IPv6 DNS请求，默认丢弃 |
-| ignore_src_list | 忽略的源地址，默认无 |
-| ignore_dest_list | 忽略的目标地址，默认无 |
-
-> Example:
->
-> ignore_dest_list "127.0.0.0/8 192.168.0.0/16 10.0.0.0/8 100.64.0.0/10"
->
-> ignore_src_list "rmnet+ wlan+ tun+ 192.168.43.0/24 192.168.49.0/24"
+* 使用 KernelSU 提供的模块配置功能管理配置，要修改配置可以修改模块目录下的 `config.sh` 文件，修改保存后可以自动触发配置更新和重启 AdSentry。
+* 动态更新描述，显示模块运行信息，包括：
+  - 模块日志
+  - 是否应用防火墙规则
+  - AdGuardHome 的版本和 PID
+  - 读取到的防火墙规则
+* 更灵活的模块配置，更精细的日志输出。
+* 模块信息输出支持自动识别系统语言，但仅支持输出为中文和英文。
 
 ## 感谢
 
 想法源于：[twoone-3/AdGuardHomeForRoot](https://github.com/twoone-3/AdGuardHomeForRoot)
+
+功能支持：[AdguardTeam/AdGuardHome](https://github.com/AdguardTeam/AdGuardHome)

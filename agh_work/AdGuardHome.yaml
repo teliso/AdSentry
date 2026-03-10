@@ -15,7 +15,7 @@ theme: auto
 dns:
   bind_hosts:
     - 127.0.0.1
-  port: 5353
+  port: 35533
   anonymize_client_ip: false
   ratelimit: 0
   ratelimit_subnet_len_ipv4: 24
@@ -38,15 +38,13 @@ dns:
     - version.bind
     - id.server
     - hostname.bind
-  trusted_proxies:
-    - 127.0.0.0/8
-    - ::1/128
+  trusted_proxies: []
   cache_enabled: true
-  cache_size: 4194304
-  cache_ttl_min: 300
-  cache_ttl_max: 43200
+  cache_size: 1572864
+  cache_ttl_min: 1800
+  cache_ttl_max: 0
   cache_optimistic: true
-  cache_optimistic_answer_ttl: 10s
+  cache_optimistic_answer_ttl: 3s
   cache_optimistic_max_age: 12h
   bogus_nxdomain: []
   aaaa_disabled: false
@@ -55,19 +53,19 @@ dns:
     custom_ip: ""
     enabled: false
     use_custom: false
-  max_goroutines: 300
-  handle_ddr: true
+  max_goroutines: 150
+  handle_ddr: false
   ipset: []
   ipset_file: ""
   bootstrap_prefer_ipv6: false
-  upstream_timeout: 2s
+  upstream_timeout: 3s
   private_networks: []
   use_private_ptr_resolvers: false
   local_ptr_upstreams: []
   use_dns64: false
   dns64_prefixes: []
   serve_http3: false
-  use_http3_upstreams: false
+  use_http3_upstreams: true
   serve_plain_dns: true
   hostsfile_enabled: true
   pending_requests:
@@ -90,15 +88,17 @@ tls:
 querylog:
   dir_path: ""
   ignored: []
-  interval: 24h
-  size_memory: 1000
+  interval: 3h
+  size_memory: 300
   enabled: false
-  file_enabled: true
+  ignored_enabled: false
+  file_enabled: false
 statistics:
   dir_path: ""
   ignored: []
   interval: 24h
   enabled: true
+  ignored_enabled: false
 filters: []
 whitelist_filters: []
 user_rules: []
@@ -145,32 +145,32 @@ filtering:
   safesearch_cache_size: 1048576
   parental_cache_size: 1048576
   cache_time: 30
-  filters_update_interval: 24
-  blocked_response_ttl: 10
+  filters_update_interval: 72
+  blocked_response_ttl: 43200
   filtering_enabled: true
-  rewrites_enabled: true
+  rewrites_enabled: false
   parental_enabled: false
   safebrowsing_enabled: false
   protection_enabled: true
 clients:
   runtime_sources:
-    whois: true
-    arp: true
+    whois: false
+    arp: false
     rdns: false
-    dhcp: true
-    hosts: true
+    dhcp: false
+    hosts: false
   persistent: []
 log:
-  enabled: true
+  enabled: false
   file: ""
   max_backups: 0
-  max_size: 100
+  max_size: 50
   max_age: 3
-  compress: false
-  local_time: false
+  compress: true
+  local_time: true
   verbose: false
 os:
   group: ""
   user: ""
   rlimit_nofile: 0
-schema_version: 32
+schema_version: 33
