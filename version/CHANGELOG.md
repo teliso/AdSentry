@@ -6,6 +6,8 @@
 * Fix the conditional statement in inotifyd.sh
 * 优化模块描述
 * Optimization Module Description
+* 修复模块配置功能
+* Fixed the module configuration feature
 
 ----
 
