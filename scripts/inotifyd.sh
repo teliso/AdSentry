@@ -9,7 +9,7 @@ readonly MONITOR_FILE="$3"
 process_w_event() {
   [[ -f "$MONITOR_DIR/disable" ]] && return
     
-  if [[ -f "$MONITOR_DIR/runing" ]]; then
+  if [[ -f "$MONITOR_DIR/running" ]]; then
     "$SCRIPTS_DIR/ad_sentry.sh" restart
   else
     "$SCRIPTS_DIR/ad_sentry.sh" start

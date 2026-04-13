@@ -90,7 +90,7 @@ update_firewall_description() {
   fi
 
   # IPv4 描述
-  local description_ipv4='iptables:'
+  local description_ipv4='Net 4:'
   
   if [[ "$IPV4_REDIRECT_UDP_53" == 'true' ]]; then
     description_ipv4="$description_ipv4 UDP ↩️"
@@ -119,7 +119,7 @@ update_firewall_description() {
   fi
   
   # IPv6 描述
-  local description_ipv6='ip6tables:'
+  local description_ipv6='Net 6:'
 
   if [[ "$IPV6_REDIRECT_UDP_53" == 'true' ]]; then
     description_ipv6="$description_ipv6 UDP ↩️"
