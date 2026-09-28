@@ -1,6 +1,6 @@
 #!/system/bin/sh
 
-start_agh () {
+start_agh() {
   local error
 
   # 导出证书目录
@@ -13,7 +13,7 @@ start_agh () {
 
   log_info '正在启动 AdGuardHome……' 'Starting AdGuardHome...'
 
-  if get_agh_pid; then
+  if get_agh_pid >/dev/null; then
     log_info '已经有 AdGuardHome 进程，无需再启动' "The AdGuardHome process already exists, so there's no need to start it again"
     return
   fi
@@ -22,22 +22,15 @@ start_agh () {
 
   # 等待 AdGuardHome 上线，最多等 5 秒
   local timeout=5
-  local success='false'
-  while [[ $timeout -gt 0 ]]; do
-    # busybox wget使用的是KernelSU携带的busybox
-    if busybox wget -q --spider "http://127.0.0.1:$WEB_PORT/"; then
-      success='true'
-      break
+  # busybox wget 使用的是 KernelSU 携带的 busybox
+  until busybox wget -q --spider "http://127.0.0.1:$WEB_PORT/"; do
+    timeout=$((timeout - 1))
+    if [[ $timeout -le 0 ]]; then
+      log_error "AdGuardHome 启动失败，请打开 shell 手动运行：$AGH_STARTUP_CMD，然后查看错误" "If AdGuardHome fails to start, please open a shell and manually run: $AGH_STARTUP_CMD, then check the error."
+      return 1
     fi
     sleep 1
-    timeout=$((timeout - 1))
   done
-
-  # 循环结束后做最终判断
-  if [[ "$success" == 'false' ]]; then
-    log_error "AdGuardHome 启动失败，请打开 shell 手动运行：$AGH_STARTUP_CMD，然后查看错误" "If AdGuardHome fails to start, please open a shell and manually run: $AGH_STARTUP_CMD, then check the error."
-    return 1
-  fi
 
   log_info 'AdGuardHome 启动成功' 'AdGuardHome started successfully'
 }
@@ -64,14 +57,14 @@ stop_agh() {
 
     # 等待 5 秒
     local timeout=5
-    while is_process_running "$agh_pid" && [ $timeout -gt 0 ]; do
+    while is_process_running "$agh_pid" && [[ $timeout -gt 0 ]]; do
       sleep 1
       timeout=$((timeout - 1))
     done
 
     # 强制终止
     if is_process_running "$agh_pid"; then
-      log_info "AdGuardHome 未退出，强制终止 (PID=$agh_pid)" "AdGuardHome not logged out, forced termination (PID=$agh_pid)"
+      log_info "AdGuardHome 未退出，强制终止 (PID=$agh_pid)" "AdGuardHome did not exit, forcing termination (PID=$agh_pid)"
       if ! error=$(kill -9 "$agh_pid" 2>&1); then
         log_error "AdGuardHome 强制停止失败，请手动停止：$error" "Forced shutdown of AdGuardHome failed. Please stop manually: $error"
         return 1

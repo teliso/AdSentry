@@ -20,15 +20,9 @@ export_time_zone() {
   # 首先尝试系统时区
   local sys_tz
   sys_tz=$(getprop persist.sys.timezone 2>/dev/null)
-  
-  if [[ "$sys_tz" ]]; then
-    readonly TZ="$sys_tz"
-    export TZ
-    return
-  fi
 
   # 如果系统时区不可用，回退到 UTC
-  readonly TZ='UTC'
+  readonly TZ="${sys_tz:-UTC}"
   export TZ
 }
 
@@ -37,36 +31,25 @@ get_agh_pid() {
   local pid
   pid=$(pgrep -f "$AGH_STARTUP_CMD" | head -n1)
 
-  if [[ -z "$pid" ]]; then
-    return 1
-  fi
-
+  [[ "$pid" ]] || return 1
   echo "$pid"
 }
 
 is_process_running() {
-    local pid="$1"
+  local pid="$1"
 
-    # 返回值：运行中返回 0，未运行返回 1
-    [[ "$pid" ]] && kill -0 "$pid" 2>/dev/null
+  # 返回值：运行中返回 0，未运行返回 1
+  [[ "$pid" ]] && kill -0 "$pid" 2>/dev/null
 }
 
 get_supported_firewall_tools() {
-  local tools
+  local tools=''
+  local tool
 
-  which iptables >/dev/null 2>&1 && tools='iptables'
-  
-  if which ip6tables >/dev/null 2>&1; then
-    if [[ "$tools" ]]; then
-      tools="$tools ip6tables"
-    else
-      tools='ip6tables'
-    fi
-  fi
+  for tool in iptables ip6tables; do
+    which "$tool" >/dev/null 2>&1 && tools="${tools:+$tools }$tool"
+  done
 
-  if [[ -z "$tools" ]]; then
-    return 1
-  fi
-
+  [[ "$tools" ]] || return 1
   echo "$tools"
 }

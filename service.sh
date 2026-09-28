@@ -2,16 +2,12 @@
 
 readonly MODULE_DIR="${0%/*}"
 export MODULE_DIR
-SCRIPTS_DIR="$MODULE_DIR/scripts"
-readonly SCRIPTS_DIR
+readonly SCRIPTS_DIR="$MODULE_DIR/scripts"
 
 # 重启后进行配置初始化
 if [[ ! -f "$MODULE_DIR/initialized" ]]; then
   # 删除已有配置，避免配置混乱
-  configPath="/data/adb/ksu/modules_configs/AdSentry/persist.config"
-  if [[ -f "$configPath" ]]; then
-    rm -rf  "$configPath"
-  fi
+  rm -f '/data/adb/ksu/modules_configs/AdSentry/persist.config'
 
   "$MODULE_DIR/config.sh"
   # 初始化以后创建已初始化标志，下次重启不进行重复操作
