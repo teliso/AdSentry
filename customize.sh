@@ -8,24 +8,25 @@ LANGUAGE='zh'
 
 locale=$(getprop persist.sys.locale 2>/dev/null)
 [[ -z "$locale" ]] && locale=$(getprop ro.product.locale 2>/dev/null)
-[[ -z "$locale" ]] && locale=$(getprop persist.sys.LANGUAGE 2>/dev/null)
+[[ -z "$locale" ]] && locale=$(getprop persist.sys.language 2>/dev/null)
 
 [[ "$locale" == en* ]] && LANGUAGE='en'
 
-log() {
+# 按系统语言选择信息；用法：msg <中文> <英文>
+msg() {
   if [[ "$LANGUAGE" == 'zh' ]]; then
-    ui_print "$1"
+    echo "$1"
   else
-    ui_print "$2"
+    echo "$2"
   fi
 }
 
+log() {
+  ui_print "$(msg "$1" "$2")"
+}
+
 error_msg() {
-  if [[ "$LANGUAGE" == 'zh' ]]; then
-    abort "$1"
-  else
-    abort "$2"
-  fi
+  abort "$(msg "$1" "$2")"
 }
 
 DEVICE=$(getprop ro.product.device)
@@ -33,33 +34,41 @@ DEVICE=$(getprop ro.product.device)
 log "设备信息：$DEVICE - $ARCH" "Device info: $DEVICE - $ARCH"
 log '开始安装AdSentry……' 'Installing AdSentry...'
 
-preserve_configuration_installation() {
+# 从旧模块复制文件或目录到新模块；旧模块中不存在时跳过
+preserve() {
+  local src="$MODULE_DIR/$1"
+  local dst="$MODPATH/$1"
+  dst="${dst%/*}"
   local error
 
+  if [[ ! -e "$src" ]]; then
+    log "旧模块中没有 $1，跳过" "$1 not found in the old module, skipping"
+    return
+  fi
+
+  error=$(\cp -af "$src" "$dst" 2>&1) || \
+    error_msg "保留 $1 时失败，安装停止：$error" "Installation failed and stopped while retaining $1: $error"
+}
+
+preserve_configuration_installation() {
   directly_unzip
 
   if [[ "$KEEP_MODULE_CONFIG" == 'true' ]]; then
     log '保留模块配置文件 config.sh' 'Preserve module configuration file config.sh'
-
-    error=$(\cp -af "$MODULE_DIR/config.sh" "$MODPATH" 2>&1) || \
-      error_msg "保留模块配置文件 config.sh 时失败，安装停止：$error" "Installation failed and stopped while retaining the module configuration file config.sh: $error"
+    preserve 'config.sh'
   fi
 
   if [[ "$KEEP_AGH_DATA" == 'true' ]]; then
     log '保留旧 AdGuardHome 的数据' 'Retain data from the old AdGuardHome'
-
-    error=$(\cp -af "$MODULE_DIR/agh_work/AdGuardHome.yaml" "$MODPATH/agh_work" 2>&1) || \
-      error_msg "保留旧 AdGuardHome 的 AdGuardHome.yaml 文件时失败，安装停止：$error" "Installation failed while trying to retain the old AdGuardHome.yaml file, and the installation stopped: $error"
-    
-    error=$(\cp -af "$MODULE_DIR/agh_work/data" "$MODPATH/agh_work" 2>&1) || \
-      error_msg "保留旧 AdGuardHome 的 data 目录时失败，安装停止：$error" "Installation failed while trying to preserve the old AdGuardHome data directory, and stopped: $error"
+    preserve 'agh_work/AdGuardHome.yaml'
+    preserve 'agh_work/data'
   fi
 }
 
 directly_unzip() {
   local error
 
-  log '正在解压文件……' 'Installation without retaining configuration, decompressing files...'
+  log '正在解压文件……' 'Decompressing files...'
 
   error=$(unzip -oqq "$ZIPFILE" -x 'customize.sh' -d "$MODPATH" 2>&1) || \
     error_msg "解压模块时出现错误，安装停止：$error" "An error occurred while extracting the module, and the installation stopped: $error"
@@ -76,22 +85,25 @@ volume_select() {
   local prompt_en="$2"
 
   local timeout=10
+  local key
 
   log "$prompt_cn" "$prompt_en"
   log '音量上 = 是，音量下 = 否，10秒超时 = 是' 'Vol Up = Yes, Vol Down = No, 10s Timeout = Yes'
 
-  while [ $timeout -gt 0 ]; do
+  while [[ $timeout -gt 0 ]]; do
     # 读取音量键
-    local key
     key=$(getevent -lqc 1 2>/dev/null | grep -E 'KEY_VOLUME(UP|DOWN).*DOWN' | head -1)
 
-    if echo "$key" | grep -q 'KEY_VOLUMEUP'; then
-      getevent -lc 1 >/dev/null 2>&1
-      return 0
-    elif echo "$key" | grep -q 'KEY_VOLUMEDOWN'; then
-      getevent -lc 1 >/dev/null 2>&1
-      return 1
-    fi
+    case "$key" in
+      *KEY_VOLUMEUP*)
+        getevent -lc 1 >/dev/null 2>&1
+        return 0
+        ;;
+      *KEY_VOLUMEDOWN*)
+        getevent -lc 1 >/dev/null 2>&1
+        return 1
+        ;;
+    esac
 
     sleep 1
     timeout=$((timeout - 1))

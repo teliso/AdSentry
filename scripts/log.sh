@@ -2,24 +2,15 @@
 
 readonly LOG_FILE="$MODULE_DIR/as.log"
 
+# 用法：log <级别> <中文信息> <英文信息>
 log() {
-  local message
-  local timestamp
+  # 未开启日志时，只强制输出错误日志到日志文件
+  [[ "$ENABLE_MODULE_LOG" != 'true' && "$1" != 'Error' ]] && return
 
-  # 输出到日志文件
-  if [[ "$ENABLE_MODULE_LOG" == 'true' ]]; then
-    timestamp=$(date '+%Y/%m/%d %H:%M:%S')
-    [[ "$LANGUAGE" == 'zh' ]] && message="[$timestamp $1]: $2" || message="[$timestamp $1]: $3"
-    echo "$message" >> "$LOG_FILE"
-    return
-  fi
+  local message="$2"
+  [[ "$LANGUAGE" == 'zh' ]] || message="$3"
 
-  # 如果遇到错误日志但是没有开启日志，强制输出错误日志到日志文件
-  if [[ "$1" == 'Error' ]]; then
-    timestamp=$(date '+%Y/%m/%d %H:%M:%S')
-    [[ "$LANGUAGE" == 'zh' ]] && message="[$timestamp $1]: $2" || message="[$timestamp $1]: $3"
-    echo "$message" >> "$LOG_FILE"
-  fi
+  echo "[$(date '+%Y/%m/%d %H:%M:%S') $1]: $message" >> "$LOG_FILE"
 }
 
 log_info() {

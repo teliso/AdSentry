@@ -1,17 +1,26 @@
 #!/system/bin/sh
 
-get_num_from_config() {
+# 读取原始配置值，失败时记录错误日志
+get_raw_from_config() {
   local key="$1"
   local value
   if ! value=$(ksud module config get "$key" 2>&1); then
-    # 读取配置失败时，value 应该会被赋值为 stderr
+    # 读取配置失败时，value 会被赋值为 stderr
     log_error "KernelSU 读取配置项 $key 时出现错误：$value" "KernelSU encountered an error while reading configuration item $key: $value"
     return 1
   fi
 
+  echo "$value"
+}
+
+get_num_from_config() {
+  local key="$1"
+  local value
+  value=$(get_raw_from_config "$key") || return 1
+
   # 如果 value 为空，或者包含任何一个“非数字”字符
   if [[ -z "$value" || "$value" == *[!0-9]* ]]; then
-    log_error "配置项 '$key' 对应的值无效" "Configuration item '$key' does not exist or is empty"
+    log_error "配置项 '$key' 对应的值无效：'$value'" "Configuration item '$key' has an invalid value: '$value'"
     return 1
   fi
 
@@ -21,15 +30,12 @@ get_num_from_config() {
 get_bool_from_config() {
   local key="$1"
   local value
-  if ! value=$(ksud module config get "$key" 2>&1); then
-    # 读取配置失败时，value 应该会被赋值为 stderr
-    log_error "KernelSU 读取配置项 $key 时出现错误：$value" "KernelSU encountered an error while reading configuration item $key: $value"
-    return 1
-  fi
+  value=$(get_raw_from_config "$key") || return 1
 
   case "$value" in
-    'true')  echo 'true' ;;
-    'false') echo 'false' ;;
+    'true'|'false')
+      echo "$value"
+      ;;
     *)
       log_error "错误：配置项 '$key' 必须是 'true' 或 'false'，实际得到：'$value'" "Error: Configuration item '$key' must be 'true' or 'false', but the actual value is '$value'"
       return 1
@@ -51,7 +57,7 @@ RUNNING_USER=$(get_num_from_config 'running_user') || RETURN_CODE=1;            
 RUNNING_GROUP=$(get_num_from_config 'running_group') || RETURN_CODE=1;                  readonly RUNNING_GROUP
 
 # IPv4
-IPV4_RETURN_DST_LIST=$(ksud module config get 'ipv4_return_dst_list') || RETURN_CODE=1; readonly IPV4_RETURN_DST_LIST
+IPV4_RETURN_DST_LIST=$(get_raw_from_config 'ipv4_return_dst_list') || RETURN_CODE=1;   readonly IPV4_RETURN_DST_LIST
 
 IPV4_REDIRECT_UDP_53=$(get_bool_from_config 'ipv4_redirect_udp_53') || RETURN_CODE=1;   readonly IPV4_REDIRECT_UDP_53
 IPV4_REDIRECT_TCP_53=$(get_bool_from_config 'ipv4_redirect_tcp_53') || RETURN_CODE=1;   readonly IPV4_REDIRECT_TCP_53
@@ -59,9 +65,8 @@ IPV4_REDIRECT_TCP_53=$(get_bool_from_config 'ipv4_redirect_tcp_53') || RETURN_CO
 IPV4_REJECT_UDP_53=$(get_bool_from_config 'ipv4_reject_udp_53') || RETURN_CODE=1;       readonly IPV4_REJECT_UDP_53
 IPV4_REJECT_TCP_53=$(get_bool_from_config 'ipv4_reject_tcp_53') || RETURN_CODE=1;       readonly IPV4_REJECT_TCP_53
 
-# ----
 # IPv6
-IPV6_RETURN_DST_LIST=$(ksud module config get 'ipv6_return_dst_list') || RETURN_CODE=1; readonly IPV6_RETURN_DST_LIST
+IPV6_RETURN_DST_LIST=$(get_raw_from_config 'ipv6_return_dst_list') || RETURN_CODE=1;   readonly IPV6_RETURN_DST_LIST
 
 IPV6_REDIRECT_UDP_53=$(get_bool_from_config 'ipv6_redirect_udp_53') || RETURN_CODE=1;   readonly IPV6_REDIRECT_UDP_53
 IPV6_REDIRECT_TCP_53=$(get_bool_from_config 'ipv6_redirect_tcp_53') || RETURN_CODE=1;   readonly IPV6_REDIRECT_TCP_53

@@ -4,23 +4,15 @@ readonly MODULE_DIR="${0%/*}"
 export MODULE_DIR
 readonly SCRIPTS_DIR="$MODULE_DIR/scripts"
 
-LANGUAGE='zh'
-
-# 依次尝试系统语言属性
-locale=$(getprop persist.sys.locale 2>/dev/null)
-[[ -z "$locale" ]] && locale=$(getprop ro.product.locale 2>/dev/null)
-[[ -z "$locale" ]] && locale=$(getprop persist.sys.language 2>/dev/null)
-
-# 如果获取到的语言前两位是 en，就切换为英文
-[[ "$locale" == en* ]] && LANGUAGE='en'
-
-readonly LANGUAGE
+. "$SCRIPTS_DIR/tools.sh"
+export_language
 
 _print_() {
-  local message
-
-  [[ "$LANGUAGE" == 'zh' ]] && message="[AS]: $1" || message="[AS]: $2"
-  echo "$message"
+  if [[ "$LANGUAGE" == 'zh' ]]; then
+    echo "[AS]: $1"
+  else
+    echo "[AS]: $2"
+  fi
 }
 
 if [[ -f "$MODULE_DIR/running" ]]; then
